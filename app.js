@@ -16,7 +16,7 @@ const cameraTrigger = document.querySelector("#camera--trigger");
 
 async function getBackCamera() {
   const devices = await navigator.mediaDevices.enumerateDevices();
-  const backCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('environment'));
+  const backCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
 
   if (backCamera) {
     constraints.video.deviceId.exact = backCamera.deviceId;
