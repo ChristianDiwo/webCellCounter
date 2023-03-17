@@ -13,9 +13,11 @@ const constraints = {
 };
 // Define constants
 const cameraView = document.querySelector("#camera--view");
+cameraView.style.transform = 'scaleX(-1)';
 const cameraOutput = document.querySelector("#camera--output");
 const cameraSensor = document.querySelector("#camera--sensor");
 const cameraTrigger = document.querySelector("#camera--trigger");
+const worker = new Worker('worker.js');
 
 async function getBackCamera() {
   const devices = await navigator.mediaDevices.enumerateDevices();
@@ -43,4 +45,21 @@ async function cameraStart() {
   }
 }
 
+// Take a picture when cameraTrigger is tapped
+cameraTrigger.onclick = function() {
+  cameraSensor.width = cameraView.videoWidth;
+  cameraSensor.height = cameraView.videoHeight;
+  cameraSensor.getContext("2d").drawImage(cameraView, 0, 0);
+  cameraOutput.src = cameraSensor.toDataURL("image/webp");
+  cameraOutput.classList.add("taken");
+};
+
 window.addEventListener("load", cameraStart, false);
+
+worker.addEventListener('message', (event) => {
+  const processedImageData = event.data;
+  
+  // Display the processed image data on the canvas
+  const context = photo_holder.getContext('2d');
+  context.putImageData(processedImageData, 0, 0);
+});
